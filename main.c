@@ -4,7 +4,7 @@
 char *grid = NULL;
 extern char* buf;
 HANDLE outHandle;
-int solved = 1, run = NUM_PUZZLES + 1;
+int solved = 1, run = NUM_PUZZLES + 1, save = 0;
 
 void sigint_handler(int sig) {
     run = 0;
@@ -41,9 +41,12 @@ int main() {
     int a = -1, dir;
     while (run) {
         if (solved) {
+            save = run;
             run--;
-            pos = genMaze(START_DIM_X + ((NUM_PUZZLES - run) * 4), START_DIM_Y + ((NUM_PUZZLES - run) * 4));
-            solved = 0;
+            if (run) {
+                pos = genMaze(START_DIM_X + ((NUM_PUZZLES - run) * 4), START_DIM_Y + ((NUM_PUZZLES - run) * 4));
+                solved = 0;
+            }
         }
         if (run) {
             showGrid();
@@ -75,7 +78,10 @@ int main() {
             update(dir, &pos);
         }
     }
-    showGrid();
+    if (save == 1) {
+        run = save;
+        showGrid();
+    }
     printf("\nThanks for playing!\n");
     free(grid);
     free(buf);
